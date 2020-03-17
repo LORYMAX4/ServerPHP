@@ -74,7 +74,53 @@
 			$stmt->execute($params);
 			echo 'Cancellazione effettuata.';
 		break;
-		case 'PUT':
+        case 'PUT':
+            $pathArray = explode('/',$_SERVER['REQUEST_URI']);
+			$id=$pathArray[3];
+			$json = file_get_contents('php://input');
+			$data = json_decode($json,true);
+			$sql = 'update student set name=:name, surname=:surname, sidiCode=:sidiCode, taxCode=:taxCode where id=:id';
+			$stmt = $_con->prepare($sql);
+            if($data['name']=="")
+            {
+				echo 'Il campo name non può essere vuoto';
+				break;
+			}
+			if($data['surname']=="")
+			{
+				echo 'Il campo surname non può essere vuoto';
+				break;
+			}
+			if($data['sidiCode']=="")
+			{
+				echo 'Il campo sidiCode non può essere vuoto';
+				break;
+			}
+            if($data['taxCode']=="")
+            {
+                $data['taxCode']=null;
+            }
+			
+            $params = 
+            [
+				'name'=>$data['name'],
+				'surname'=>$data['surname'],
+				'sidiCode'=>$data['sidiCode'],
+				'taxCode'=>$data['taxCode'],
+				'id'=>$id
+            ];
+			$stmt->execute($params);
+			$sql = 'select * from student where id=:id';
+			$stmt = $_con->prepare($sql);
+            $params = 
+            [
+				'id'=>$id
+			];
+			$stmt->execute($params);
+			$data = $stmt->fetch(\PDO::FETCH_ASSOC);
+			$js_encode = json_encode(array($data),true);
+            header('Content-Type: application/json');
+            echo $js_encode;
 		break;
         case 'PATCH':
 		break;

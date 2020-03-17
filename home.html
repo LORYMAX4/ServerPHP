@@ -50,8 +50,19 @@
 					case "patch":
 					break;
 					case "put":
+						document.getElementById('get').hidden=true;
+						document.getElementById('post').hidden=true;
+						document.getElementById('delete').hidden=true;
+						document.getElementById('put').hidden=false;
+						document.getElementById('patch').hidden=true;
+						document.getElementById('risposta').innerHTML='';
 					break;
 					default:
+						document.getElementById('delete').hidden=true;
+						document.getElementById('get').hidden=true;
+						document.getElementById('post').hidden=true
+						document.getElementById('patch').hidden=true;
+						document.getElementById('risposta').innerHTML='';
 					break;
 				}
 			}
@@ -82,6 +93,18 @@
 					document.getElementById('post_class').hidden=true;
 					document.getElementById('post_studentClass').hidden=false;
 				} */
+			}
+			function selezione_tabellaPut()
+			{
+				if(document.getElementById('tabella_put').value=='student')
+				{
+					document.getElementById('put_student').hidden=false;
+					document.getElementById('put_class').hidden=true;
+				}else
+				{
+					document.getElementById('put_student').hidden=true;
+					document.getElementById('put_class').hidden=false;
+				}
 			}
 			function get()
 			{	
@@ -137,6 +160,18 @@
 				}
 				xhr.send();
 			}
+			function selezione_tabellaPut()
+			{
+				if(document.getElementById('tabella_put').value=='student')
+				{
+					document.getElementById('put_student').hidden=false;
+					document.getElementById('put_class').hidden=true;
+				}else
+				{
+					document.getElementById('put_student').hidden=true;
+					document.getElementById('put_class').hidden=false;
+				}
+			}
 		</script>
 		<div>
 			<select id="metodo" onchange="scelta_metodo()">
@@ -189,7 +224,24 @@
 				<input type="text" id="id_delete"> 
 				<input type="button" onclick="Delete()" value="Invia">
 			</div>
-
+			<div id="put" hidden=true>
+				<select id="tabella_put" onchange="selezione_tabellaPut()"> 
+					<option value="student">Student</option> 
+					<option value="class">Class</option> 
+				</select> <br>
+				ID:<input type="text" id="id_put">
+				<div id="put_student">
+					Name: <input type="text" id="put_name"><br> 
+					Surname: <input type="text" id="put_surname"><br> 
+					SidiCode: <input type="text" id="put_sidiCode"><br> 
+					TaxCode: <input type="text" id="put_taxCode"><br>
+				</div>
+				<div id="put_class" hidden=true>
+					Year: <input type="text" id="put_year"><br>
+					Section: <input type="text" id="put_section"><br>
+				</div>
+				<input type="button" onclick="put()" value="Invia">
+			</div>
 		<p>Risposta:</p>
 		<div id="risposta"></div>
 	</body>
