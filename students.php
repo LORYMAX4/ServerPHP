@@ -61,7 +61,18 @@
 			$js_encode = json_encode(array($data),true);
             header('Content-Type: application/json');
             echo $js_encode;
-		break;
+        break;
+        case 'DELETE':
+            $pathArray = explode('/',$_SERVER['REQUEST_URI']);
+			$id=$pathArray[3];
+			$sql = 'delete from student where id=:id';
+			$stmt = $_con->prepare($sql);
+            $params = 
+            [
+                'id'=>$id
+            ];
+			$stmt->execute($params);
+			echo 'Cancellazione effettuata.';
 		break;
 		case 'PUT':
 		break;

@@ -40,6 +40,12 @@
 						document.getElementById('patch').hidden=true;
 						document.getElementById('risposta').innerHTML='';
 					case "delete":
+						document.getElementById('delete').hidden=false;
+						document.getElementById('get').hidden=true;
+						document.getElementById('post').hidden=true;
+						document.getElementById('put').hidden=true;
+						document.getElementById('patch').hidden=true;
+						document.getElementById('risposta').innerHTML='';
 					break;
 					case "patch":
 					break;
@@ -119,6 +125,18 @@
 				xhr.setRequestHeader("Content-type", "application/json");
 				xhr.send(json); 
 			}
+			function Delete()
+			{
+				if(document.getElementById('tabella_delete').value=='student')
+				{
+					xhr.open("DELETE", 'students.php/'+document.getElementById('id_delete').value, true);
+				}
+				else
+				{
+					xhr.open("DELETE", 'classes.php/'+document.getElementById('id_delete').value, true);
+				}
+				xhr.send();
+			}
 		</script>
 		<div>
 			<select id="metodo" onchange="scelta_metodo()">
@@ -139,7 +157,39 @@
 				Con ID <input type="text" id="id_get" hidden=true> 
 				<input type="button" onclick="get()" value="Invia">
 			</div>
-		</div>
+			<div id="post" hidden=true>
+				Seleziona la tabella: 
+				<select id="tabella_post" onchange="selezione_tabellaPost()"> 
+					<option value="student">Student</option> 
+					<option value="class">Class</option> 
+				<!--	<option value="student_class">Student_class</option> -->
+				</select> 
+				<div id="post_student">
+					Name: <input type="text" id="post_name"><br> 
+					Surname: <input type="text" id="post_surname"><br> 
+					SidiCode: <input type="text" id="post_sidiCode"><br> 
+					TaxCode: <input type="text" id="post_taxCode"><br> 
+				</div>
+				<div id="post_class" hidden=true>
+					Year: <input type="text" id="post_year"><br>
+					Section: <input type="text" id="post_section"><br>
+				</div>
+			<!--	<div id="post_studentClass" hidden=true>
+					idStudent: <input type="text" id="post_idStudent"><br> 
+					idClass: <input type="text" id="post_idClass"><br> 
+				</div> -->
+				<input id="invia" type="button" value="Invia" onclick="post()">
+			</div>
+			<div id="delete" hidden=true>
+				Seleziona la tabella: 
+				<select id="tabella_delete"> 
+					<option value="student">Student</option> 
+					<option value="class">Class</option> 
+				</select>
+				<input type="text" id="id_delete"> 
+				<input type="button" onclick="Delete()" value="Invia">
+			</div>
+
 		<p>Risposta:</p>
 		<div id="risposta"></div>
 	</body>
