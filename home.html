@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Esempio ajax</title>
+
+        <script>
+            //preparo la richiesta ajax
+            var xhr = new XMLHttpRequest();
+            //asincrona
+            xhr.open("GET", 'http://localhost:8000/query.php?id=64', true);
+            //configuro la callback di risposta ok
+            xhr.onload = function() {
+                //scrivo la risposta nel body della pagina
+                document.getElementById('risposta').innerHTML = xhr.response;
+            };
+            //configuro la callback di errore
+            xhr.onerror = function() { 
+                alert('Errore');
+            };
+            //invio la richista ajax
+            xhr.send();
+        </script>
+
+        
+        
+        <script>
+            //preparo la richiesta ajax
+            var xhr = new XMLHttpRequest();
+            //sincorna
+            xhr.open("GET", 'http://localhost:8000/query.php?id=64', false);
+            //invio la richista ajax
+            xhr.send();
+            document.getElementById('risposta').innerHTML = xhr.response;
+        </script>
+        
+    </head>
+    <body>
+        <h1>Esempio pagina con richiesta ajax</h1>
+        <p>Risposta:</p>
+        <div id="risposta"></div>
+    </body>
+</html>
