@@ -3,7 +3,7 @@
     $_dbName = "fi_itis_meucci";
     $_dbUsername = "root";
     $_dbPassword = "root";
-    $_con = new PDO("mysql:host=$_dbHostname;dbname=$_dbName",$_dbUsername,$_dbPassword)";
+    $_con = new PDO("mysql:host=$_dbHostname;dbname=$_dbName", $_dbUsername, $_dbPassword);
     $_con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $_con->exec('SET NAMES utf8');
     $requestMethod = $_SERVER["REQUEST_METHOD"];
@@ -37,7 +37,29 @@
             header('Content-Type: application/json');
             echo $js_encode;
         break;
-		case 'POST':
+        case 'POST':
+			$json = file_get_contents('php://input');
+			$data = json_decode($json,true);
+			$sql = "insert into class values(default, :year, :section);";
+			$stmt = $_con->prepare($sql);
+            $params = 
+            [
+				'year'=>$data["year"],
+				'section'=>$data["section"],
+			];
+			$stmt->execute($params);
+			$sql = "select * from class where year=:year and section=:section";
+			$stmt = $_con->prepare($sql);
+            $params = 
+            [
+				'year'=>$data["year"],
+				'section'=>$data["section"]
+			];
+			$stmt->execute($params);
+			$data = $stmt->fetch(\PDO::FETCH_ASSOC);
+			$js_encode = json_encode(array($data),true);
+            header('Content-Type: application/json');
+            echo $js_encode;
 		break;
 		case 'DELETE':
 		break;

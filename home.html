@@ -25,11 +25,20 @@
 				switch(document.getElementById('metodo').value)
 				{
 					case "get":
-						document.getElementById('get').hidden=false
+						document.getElementById('get').hidden=false;
+						document.getElementById('post').hidden=true;
+						document.getElementById('delete').hidden=true;
+						document.getElementById('put').hidden=true;
+						document.getElementById('patch').hidden=true;
 						document.getElementById('risposta').innerHTML='';
 					break;
 					case "post":
-					break;
+						document.getElementById('post').hidden=false;
+						document.getElementById('get').hidden=true;
+						document.getElementById('delete').hidden=true;
+						document.getElementById('put').hidden=true;
+						document.getElementById('patch').hidden=true;
+						document.getElementById('risposta').innerHTML='';
 					case "delete":
 					break;
 					case "patch":
@@ -46,6 +55,27 @@
 					document.getElementById('id_get').hidden=false;
 				else
 					document.getElementById('id_get').hidden=true;
+			}
+			function selezione_tabellaPost()
+			{
+				if(document.getElementById('tabella_post').value=='student')
+				{
+					document.getElementById('post_student').hidden=false;
+					document.getElementById('post_class').hidden=true;
+				//	document.getElementById('post_studentClass').hidden=true;
+				}
+				else //if(document.getElementById('tabella_post').value=='class') 
+				{
+					document.getElementById('post_student').hidden=true;
+					document.getElementById('post_class').hidden=false;
+				//	document.getElementById('post_studentClass').hidden=true;
+				}
+				/*else
+				{
+					document.getElementById('post_student').hidden=true;
+					document.getElementById('post_class').hidden=true;
+					document.getElementById('post_studentClass').hidden=false;
+				} */
 			}
 			function get()
 			{	
@@ -73,6 +103,21 @@
 					}
 				}
 				xhr.send();
+			}
+			function post()
+			{
+				if(document.getElementById('tabella_post').value=='student')
+				{
+					xhr.open("POST", 'students.php', true);
+					var json = '{"name":"' + document.getElementById('post_name').value + '", "surname":"' + document.getElementById('post_surname').value + '", "sidiCode":"' + document.getElementById('post_sidiCode').value + '", "taxCode":"' + document.getElementById('post_taxCode').value +'"}';
+				}
+				else
+				{
+					xhr.open("POST", 'classes.php' ,true);
+					var json = '{"year":"' + document.getElementById('post_year').value + '", "section":"' + document.getElementById('post_section').value + '"}';
+				}
+				xhr.setRequestHeader("Content-type", "application/json");
+				xhr.send(json); 
 			}
 		</script>
 		<div>

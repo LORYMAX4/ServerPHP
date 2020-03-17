@@ -38,6 +38,29 @@
             echo $js_encode;
         break;
 		case 'POST':
+			$json = file_get_contents('php://input');
+			$data = json_decode($json,true);
+			$sql = "insert into student values(default, :name, :surname, :sidiCode, :taxCode);";
+			$stmt = $_con->prepare($sql);
+            $params = 
+            [
+				'name'=>$data["name"],
+				'surname'=>$data["surname"],
+				'sidiCode'=>$data["sidiCode"],
+				'taxCode'=>$data["taxCode"]
+			];
+			$stmt->execute($params);
+			$sql = "select * from student where sidiCode=:sidiCode";
+			$stmt = $_con->prepare($sql);
+            $params = 
+            [
+				'sidiCode'=>$data["sidiCode"]
+			];
+			$stmt->execute($params);
+			$data = $stmt->fetch(\PDO::FETCH_ASSOC);
+			$js_encode = json_encode(array($data),true);
+            header('Content-Type: application/json');
+            echo $js_encode;
 		break;
 		break;
 		case 'PUT':
