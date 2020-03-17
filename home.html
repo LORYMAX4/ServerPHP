@@ -11,12 +11,12 @@
 				xhr = new XMLHttpRequest();
 				//configuro la callback per la risposta
 				xhr.onload = function()
-                {
+				{
 					document.getElementById('risposta').innerHTML = xhr.response;
 				};
 				//configuro la callback di errore
 				xhr.onerror = function()
-                { 
+				{ 
 					alert('Errore');
 				};
 			}
@@ -39,6 +39,7 @@
 						document.getElementById('put').hidden=true;
 						document.getElementById('patch').hidden=true;
 						document.getElementById('risposta').innerHTML='';
+					break;
 					case "delete":
 						document.getElementById('delete').hidden=false;
 						document.getElementById('get').hidden=true;
@@ -296,6 +297,7 @@
 				</div>
 				<input type="button" onclick="put()" value="Invia">
 			</div>
+		</div>
 		<p>Risposta:</p>
 		<div id="risposta"></div>
 	</body>

@@ -33,12 +33,13 @@
                 $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             }
             $js_encode = json_encode(array($data),true);
-            //output
             header('Content-Type: application/json');
             echo $js_encode;
         break;
-        case 'POST':
+		case 'POST':
+			//prendo il json della richiesta
 			$json = file_get_contents('php://input');
+			//trasformo il json ricevuto in un oggetto
 			$data = json_decode($json,true);
 			$sql = "insert into class values(default, :year, :section);";
 			$stmt = $_con->prepare($sql);
@@ -56,44 +57,45 @@
 				'section'=>$data["section"]
 			];
 			$stmt->execute($params);
+			//ritorno il json dello studente inserito
 			$data = $stmt->fetch(\PDO::FETCH_ASSOC);
 			$js_encode = json_encode(array($data),true);
             header('Content-Type: application/json');
             echo $js_encode;
 		break;
-        case 'DELETE':
-            $pathArray = explode('/',$_SERVER['REQUEST_URI']);
+		case 'DELETE':
+			$pathArray = explode('/',$_SERVER['REQUEST_URI']);
 			$id=$pathArray[3];
 			$sql = 'delete from class where id=:id';
 			$stmt = $_con->prepare($sql);
             $params = 
-            [
+                [
                     'id'=>$id
                 ];
 			$stmt->execute($params);
 			echo 'Cancellazione effettuata.';
 		break;
-        case 'PUT':
-            $pathArray = explode('/',$_SERVER['REQUEST_URI']);
+		case 'PUT':
+			$pathArray = explode('/',$_SERVER['REQUEST_URI']);
 			$id=$pathArray[3];
 			$json = file_get_contents('php://input');
 			$data = json_decode($json,true);
 			$sql = 'update class set year=:year, section=:section where id=:id';
 			$stmt = $_con->prepare($sql);
-                if($data["year"]=="")
-                {
-                    $data["year"]=null;
-                }
-                if($data["section"]=="")
-                {
-                    $data["section"] = null;
-                }
-                $params =
-                [
-				'year'=>$data["year"],
-				'section'=>$data["section"],
-				'id'=>$id
-                ];
+            if($data["year"]=="")
+            {
+                $data["year"]=null;
+            }
+            if($data["section"]=="")
+            {
+                $data["section"] = null;
+            }
+            $params = 
+            [
+            'year'=>$data["year"],
+            'section'=>$data["section"],
+            'id'=>$id
+            ];
 			$stmt->execute($params);
 			$sql = 'select * from class where id=:id';
 			$stmt = $_con->prepare($sql);
@@ -107,8 +109,8 @@
             header('Content-Type: application/json');
             echo $js_encode;
 		break;
-        case 'PATCH':
-            $pathArray = explode('/',$_SERVER['REQUEST_URI']);
+		case 'PATCH':
+			$pathArray = explode('/',$_SERVER['REQUEST_URI']);
 			$id=$pathArray[3];
 			$json = file_get_contents('php://input');
 			$data = json_decode($json,true);
@@ -118,9 +120,9 @@
                 $sql = $sql . 'year="' . $data['year'] . '",';
             }
             if($data['section']!="")
-            
-				$sql = $sql . 'section="' . $data['section'] . '",';
-            }   
+            {
+                $sql = $sql . 'section="' . $data['section'] . '",';
+            }
 			$sql = substr($sql, 0, strlen($sql)-1);	//tolgo l'ultima virgola
 			$sql = $sql . ' where id=' . $id;
 			$stmt = $_con->prepare($sql);
