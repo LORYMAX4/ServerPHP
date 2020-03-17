@@ -107,7 +107,35 @@
             header('Content-Type: application/json');
             echo $js_encode;
 		break;
-		case 'PATCH':
+        case 'PATCH':
+            $pathArray = explode('/',$_SERVER['REQUEST_URI']);
+			$id=$pathArray[3];
+			$json = file_get_contents('php://input');
+			$data = json_decode($json,true);
+			$sql = 'update class set ';
+            if($data['year']!="")
+            {
+                $sql = $sql . 'year="' . $data['year'] . '",';
+            }
+            if($data['section']!="")
+            
+				$sql = $sql . 'section="' . $data['section'] . '",';
+            }   
+			$sql = substr($sql, 0, strlen($sql)-1);	//tolgo l'ultima virgola
+			$sql = $sql . ' where id=' . $id;
+			$stmt = $_con->prepare($sql);
+			$stmt->execute();
+			$sql = 'select * from class where id=:id';
+			$stmt = $_con->prepare($sql);
+            $params = 
+            [
+				'id'=>$id
+			];
+			$stmt->execute($params);
+			$data = $stmt->fetch(\PDO::FETCH_ASSOC);
+			$js_encode = json_encode(array($data),true);
+            header('Content-Type: application/json');
+            echo $js_encode;
 		break;
     }
 ?>
