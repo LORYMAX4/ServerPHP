@@ -36,9 +36,7 @@
             echo $js_encode;
         break;
 		case 'POST':
-			//prendo il json della richiesta
 			$json = file_get_contents('php://input');
-			//trasformo il json ricevuto in un oggetto
 			$data = json_decode($json,true);
 			$sql = "insert into student values(default, :name, :surname, :sidiCode, :taxCode);";
 			$stmt = $_con->prepare($sql);
@@ -57,7 +55,6 @@
 				'sidiCode'=>$data["sidiCode"]
 			];
 			$stmt->execute($params);
-			//ritorno il json dello studente inserito
 			$data = $stmt->fetch(\PDO::FETCH_ASSOC);
 			$js_encode = json_encode(array($data),true);
             //output
@@ -80,7 +77,6 @@
 			$pathArray = explode('/',$_SERVER['REQUEST_URI']);
 			$id = $pathArray[2];
 			$json = file_get_contents('php://input');
-			//trasformo il json ricevuto
 			$data = json_decode($json,true);
 			$sql = 'update student set name=:name, surname=:surname, sidiCode=:sidiCode, taxCode=:taxCode where id=:id';
 			$stmt = $_con->prepare($sql);
@@ -128,7 +124,6 @@
 			$pathArray = explode('/',$_SERVER['REQUEST_URI']);
 			$id=$pathArray[2];
 			$json = file_get_contents('php://input');
-			//trasformo il json ricevuto
 			$data = json_decode($json,true);
 			$sql = 'update student set ';
             if($data['name']!="")
@@ -147,7 +142,7 @@
 			{
 				$sql = $sql . 'taxCode="' . $data['taxCode'] . '",';
 			}
-			$sql = substr($sql, 0, strlen($sql)-1);	//tolgo l'ultima virgola
+			$sql = substr($sql, 0, strlen($sql)-1);
 			$sql = $sql . ' where id=' . $id;
 			$stmt = $_con->prepare($sql);
 			$stmt->execute();

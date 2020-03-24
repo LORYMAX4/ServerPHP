@@ -37,9 +37,7 @@
             echo $js_encode;
         break;
 		case 'POST':
-			//prendo il json della richiesta
 			$json = file_get_contents('php://input');
-			//trasformo il json ricevuto in un oggetto
 			$data = json_decode($json,true);
 			$sql = "insert into class values(default, :year, :section);";
 			$stmt = $_con->prepare($sql);
@@ -57,7 +55,6 @@
 				'section'=>$data["section"]
 			];
 			$stmt->execute($params);
-			//ritorno il json dello studente inserito
 			$data = $stmt->fetch(\PDO::FETCH_ASSOC);
 			$js_encode = json_encode(array($data),true);
             header('Content-Type: application/json');
@@ -123,7 +120,7 @@
             {
                 $sql = $sql . 'section="' . $data['section'] . '",';
             }
-			$sql = substr($sql, 0, strlen($sql)-1);	//tolgo l'ultima virgola
+			$sql = substr($sql, 0, strlen($sql)-1);
 			$sql = $sql . ' where id=' . $id;
 			$stmt = $_con->prepare($sql);
 			$stmt->execute();

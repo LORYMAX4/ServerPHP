@@ -17,8 +17,7 @@
                 $id = $pathArray[2];
                 $sql = "select * from student_class where id=:id";
                 $stmt = $_con->prepare($sql);
-				$params = 
-				[
+                $params = [
                     'id'=>$id
                 ];
                 $stmt->execute($params);
@@ -33,6 +32,7 @@
                 $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             }
             $js_encode = json_encode(array($data),true);
+            //output
             header('Content-Type: application/json');
             echo $js_encode;
         break;
@@ -67,7 +67,7 @@
 			$stmt = $_con->prepare($sql);
 			$params = 
 			[
-                'id'=>$id
+				'id'=>$id
             ];
 			$stmt->execute($params);
 			echo 'Cancellazione effettuata.';
@@ -79,6 +79,7 @@
 			$data = json_decode($json,true);
 			$sql = "update student_class set idStudent=:idStudent, idClass=:idClass where id=:id";
 			$stmt = $_con->prepare($sql);
+
 			if(!isset($data['idStudent']) || !isset($data['idClass']))
 			{
 				echo 'I campi non possono essere vuoti.';
@@ -93,7 +94,7 @@
 			$stmt->execute($params);
 			$sql = 'select * from student_class where id=:id';
 			$stmt = $_con->prepare($sql);
-			$params =
+			$params = 
 			[
 				'id'=>$id
 			];
