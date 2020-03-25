@@ -17,7 +17,8 @@
                 $id = $pathArray[2];
                 $sql = "select * from student where id=:id";
                 $stmt = $_con->prepare($sql);
-                $params = [
+				$params = 
+				[
                     'id'=>$id
                 ];
                 $stmt->execute($params);

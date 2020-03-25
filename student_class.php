@@ -11,13 +11,14 @@
     {
         case 'GET':
             $pathArray = explode('/',$_SERVER['REQUEST_URI']);
-            if(isset($pathArray[2]))
+            if(isset($pathArray[3]))
             {
                 //con parametro id
-                $id = $pathArray[2];
+                $id = $pathArray[3];
                 $sql = "select * from student_class where id=:id";
                 $stmt = $_con->prepare($sql);
-                $params = [
+				$params = 
+				[
                     'id'=>$id
                 ];
                 $stmt->execute($params);
@@ -62,7 +63,7 @@
 		break;
 		case 'DELETE':
 			$pathArray = explode('/',$_SERVER['REQUEST_URI']);
-			$id=$pathArray[2];
+			$id=$pathArray[3];
 			$sql = 'delete from student_class where id=:id';
 			$stmt = $_con->prepare($sql);
 			$params = 
@@ -74,7 +75,7 @@
 		break;
 		case 'PUT':
 			$pathArray = explode('/',$_SERVER['REQUEST_URI']);
-			$id=$pathArray[2];
+			$id=$pathArray[3];
 			$json = file_get_contents('php://input');
 			$data = json_decode($json,true);
 			$sql = "update student_class set idStudent=:idStudent, idClass=:idClass where id=:id";
@@ -106,7 +107,7 @@
 		break;
 		case 'PATCH':
 			$pathArray = explode('/',$_SERVER['REQUEST_URI']);
-			$id=$pathArray[2];
+			$id=$pathArray[3];
 			$json = file_get_contents('php://input');
 			$data = json_decode($json,true);
 			$sql = 'update student_class set ';
