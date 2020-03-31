@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="style/fontawesome/css/all.css" rel="stylesheet" type="text/css">
         <title>Esempio ajax</title>
         <script>
             var xhr;
@@ -9,6 +13,16 @@
             var cognome;
             var sidi;
             var tax;
+            var action;
+            var studBackup;
+            function error(msg)
+            {
+                document.getElementById("errorSpace").innerHTML = msg;
+                setTimeout(function()
+                {
+                    document.getElementById("errorSpace").innerHTML = '';
+                }, 5000);
+            }
             function output(obj)
             {
                 document.getElementById("bodyRisposta").innerHTML = "";
@@ -16,10 +30,12 @@
                 {
                     obj=Array.from(obj);
                 }
+                //Si crea per ogni studente un elemento html
                 for(var i = 0; i<obj.length;i++)
                 {
                     var stud = document.createElement("tr");
                     stud.className = "studente";
+                    stud.id="stud"+i;
                     var idth= document.createElement("th");
                     var idtext = document.createTextNode(obj[i].id);
                     idth.appendChild(idtext);
@@ -40,12 +56,25 @@
                     var ttext = document.createTextNode(obj[i].tax_code);
                     ttd.appendChild(ttext);
                     stud.appendChild(ttd);
+                    var atd = document.createElement("td");
+                    atd.className = "action";
+                    stud.appendChild(atd);
                     document.getElementById('bodyRisposta').appendChild(stud);
+                    action = document.getElementsByClassName("action");
+                    action[i].innerHTML = '<button type="button" class="btn btn-success" onclick="edit('+i+','+obj[i].id+',\''+obj[i].name+'\',\''+obj[i].surname+'\',\''+obj[i].sidi_code+'\',\''+obj[i].tax_code+'\')"><i class="fas fa-edit"></i></button><button type="button" class="btn btn-danger" onclick="deleteid('+obj[i].id+')"><i class="far fa-trash-alt"></i></button>';
                 }
+            }
+            function edit(i, id, name, surname, sidi_code, tax_code)
+            {
+                studBackup = document.getElementById("stud"+i).innerHTML;
+                document.getElementById("stud"+i).innerHTML = '<th>'+id+'<td><input id="inputNome2" placeholder="'+name+'"></td><td><input id="inputCognome2" placeholder="'+surname+'"></td><td><input id="inputSidi2" placeholder="'+sidi_code+'"></td><td><input id="inputTax2" placeholder="'+tax_code+'"></td><td class="action"><button type="button" class="btn btn-success" onclick="patch('+id+')"><i class="fas fa-check"></i></button><button type="button" class="btn btn-warning" onclick="discard('+i+')"><i class="fas fa-backspace"></i></button></td>';
+            }
+            function discard(i)
+            {
+                document.getElementById("stud"+i).innerHTML = studBackup;
             }
             function get()
             {
-                document.getElementById("contentRisposta").style.display="block";
                 xhr = new XMLHttpRequest();
                 xhr.open("GET", 'http://localhost/api.php', true);
                 xhr.onload = function()
@@ -61,31 +90,45 @@
             }
             function getid()
             {
-                document.getElementById("contentRisposta").style.display="block";
                 id = document.getElementById("inputId").value;
-                xhr = new XMLHttpRequest();
-                xhr.open("GET", 'http://localhost/api.php?id='+id, true);
-                xhr.onload = function()
+                if(id!="")
                 {
-                    var obj = JSON.parse(xhr.response);
-                    output(obj);
+                    xhr = new XMLHttpRequest();
+                    xhr.open("GET", 'http://localhost/api.php?id='+id, true);
+                    xhr.onload = function()
+                    {
+                        try
+                        {
+                            var obj = JSON.parse(xhr.response);
+                            if(obj.status==false)
+                            {
+                                throw "Lo studente non esiste";
+                            }
+                            output(obj);
+                        }
+                        catch(err)
+                        {
+                            error(err);
+                        }
+                    }
+                    xhr.onerror = function()
+                    { 
+                        alert('Errore');
+                    };
+                    xhr.send();
                 }
-                xhr.onerror = function()
-                { 
-                    alert('Errore');
-                };
-                xhr.send();
+                else
+                {
+                    error("Inserire un ID studente");
+                }
             }
-            function deleteid()
+            function deleteid(id)
             {
-                document.getElementById("contentRisposta").style.display="block";
-                id = document.getElementById("inputId").value;
                 xhr = new XMLHttpRequest();
                 xhr.open("DELETE", 'http://localhost/api.php?id='+id, true);
                 xhr.onload = function()
                 {
-                    var obj = JSON.parse(xhr.response.slice(1,-2));
-                    output(obj);
+                    get();
                 }
                 xhr.onerror = function()
                 { 
@@ -95,7 +138,6 @@
             }
             function post()
             {
-                document.getElementById("contentRisposta").style.display="block";
                 nome = document.getElementById("inputNome").value;
                 cognome = document.getElementById("inputCognome").value;
                 sidi = document.getElementById("inputSidi").value;
@@ -104,8 +146,20 @@
                 xhr.open("POST", 'http://localhost/api.php', true);
                 xhr.onload = function()
                 {
-                    var obj = JSON.parse(xhr.response.slice(1,-2));
-                    output(obj);
+                    try
+                    {
+                        var obj = JSON.parse(xhr.response);
+                        if(obj.status==false)
+                        {
+                            throw "Input studente non valido";
+                        }
+                        get();
+                        window.scrollTo(0,document.body.scrollHeight);
+                    }
+                    catch(err)
+                    {
+                        error(err);
+                    }
                 }
                 xhr.onerror = function()
                 { 
@@ -124,10 +178,8 @@
                     )
                 );
             }
-            function patch()
+            function patch(id)
             {
-                document.getElementById("contentRisposta").style.display="block";
-                id = document.getElementById("inputId2").value;
                 nome = document.getElementById("inputNome2").value;
                 cognome = document.getElementById("inputCognome2").value;
                 sidi = document.getElementById("inputSidi2").value;
@@ -137,7 +189,7 @@
                 xhr.onload = function()
                 {
                     var obj = JSON.parse(xhr.response.slice(1,-2));
-                    output(obj);
+                    get();
                 }
                 xhr.onerror = function()
                 { 
@@ -157,10 +209,8 @@
                     )
                 );
             }
-            function put()
+            function put(id)
             {
-                document.getElementById("contentRisposta").style.display="block";
-                id = document.getElementById("inputId2").value;
                 nome = document.getElementById("inputNome2").value;
                 cognome = document.getElementById("inputCognome2").value;
                 sidi = document.getElementById("inputSidi2").value;
@@ -170,7 +220,7 @@
                 xhr.onload = function()
                 {
                     var obj = JSON.parse(xhr.response.slice(1,-2));
-                    output(obj);
+                    get();
                 }
                 xhr.onerror = function()
                 { 
@@ -191,44 +241,26 @@
                 );
             }
         </script>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     </head>
-    <body>
-        <h2>Richiesta</h2>
-        <button class="btn btn-secondary" id="get" onclick="get()">GET</button>
-        <br>
+    <body onload="get()">
+        <div id="errorSpace" class="w3-animate-opacity"></div>
         <div class="content rounded">
             <input id="inputId" placeholder="ID studente"/>
-            <button class="btn btn-primary" id="getid" onclick="getid()">GET ID</button>
-            <button class="btn btn-warning"id="deleteid" onclick="deleteid()">DELETE</button>
+            <button class="btn btn-primary" id="getid" onclick="getid()"><i class="fas fa-search"></i></button>
+            <button class="btn btn-warning" id="get" onclick="get()"><i class="fas fa-clipboard-list"></i></button>
         </div>
-        <div class="content row rounded">
-            <div class="col-6">
+        <div class="content row rounded" style="margin-left:0px">
+            <div class="col-6" style="padding-left:19.5%;">
                 <input id="inputNome" placeholder="Nome"/><br>
                 <input id="inputCognome" placeholder="Cognome"/><br>
                 <input id="inputSidi" placeholder="Codice SIDI"/><br>
                 <input id="inputTax" placeholder="Codice fiscale"/><br>
             </div>
-            <div class="col-6">
-                <button class="btn btn-info" id="post" onclick="post()">POST</button>
-            </div>
-        </div>
-        <div class="content row rounded">
-            <div class="col-6">
-                <input id="inputId2" placeholder="ID Studente"/><br>
-                <input id="inputNome2" placeholder="Nome"/><br>
-                <input id="inputCognome2" placeholder="Cognome"/><br>
-                <input id="inputSidi2" placeholder="Codice SIDI"/><br>
-                <input id="inputTax2" placeholder="Codice fiscale"/><br>
-            </div>
-            <div class="col-6">
-                <button class="btn btn-success" id="patch" onclick="patch()">PATCH</button>
-                <br>
-                <button class="btn btn-success" id="put" onclick="put()">PUT</button>
+            <div class="col-6" style="padding-right:25%; padding-top:5%;">
+                <button class="btn btn-success" id="post" onclick="post()"><i class="fas fa-plus"></i></button>
             </div>
         </div>
         <div id="contentRisposta">
-            <h2>Risposta</h2>
             <table class="table table-hover content rounded" id="risposta">
                 <thead style="border:solid #2a6ba0 3px">
                     <tr>
@@ -237,6 +269,7 @@
                         <th scope="col">Cognome</th>
                         <th scope="col">SIDI</th>
                         <th scope="col">Codice fiscale</th>
+                        <th scope="col">Azione</th>
                     </tr>
                 </thead>
                 <tbody id="bodyRisposta"></tbody>
@@ -247,35 +280,41 @@
 <style>
     body
     {
-        margin-left:300px;
-        margin-top:50px;
+        padding-left:300px;
+        padding-top:50px;
+    }
+    #errorSpace
+    {
+        color:red;
+        text-align:center;
+        align-content: center;
+        left:40%;
+        top:10px;
+        display: block;
+        position:absolute;
+        font-size: 18px;
     }
     .content, .btn
     {
-        margin: auto;
         margin-top:25px;
         margin-bottom:25px;
     }
     .content
     {
         text-align:center;
-        margin-right:60%;
+        margin-right:25%;
         padding:10px;
         background-color: #b4ddff;
     }
     #post
     {
         margin:0;
-        margin-top:50px;
+        border-radius:50%;
     }
     #risposta
     {
-        width:60%;
+        width:75%;
         text-align:left;
-    }
-    #contentRisposta
-    {
-        display:none;
     }
     .studente
     {
@@ -293,5 +332,11 @@
     {
         margin-top:5px;
         margin-bottom:5px;
+    }
+    #risposta .btn
+    {
+        margin-top:0px;
+        margin-bottom:0px;
+        margin-right:5px;
     }
 </style>

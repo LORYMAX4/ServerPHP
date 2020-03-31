@@ -19,7 +19,7 @@ class DBConnection
 			echo "Connection failed: " . $e->getMessage();
 		  }
     }
-    public function returnConnection()
+    public function returnConnection() 
     {
         return $this->_con;
     }

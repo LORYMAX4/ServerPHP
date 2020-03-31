@@ -34,10 +34,11 @@ class Student
 		{
     		die("Oh noes! There's an error in the query! ".$e);
 		}
+ 
     }
-	public function list()
+	public function list() 
 	{
-		try
+		try 
 		{
     		$sql = "SELECT * FROM student";
 		    $stmt = $this->db->prepare($sql);
@@ -45,12 +46,12 @@ class Student
 		    $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             return $result;
 		} 
-		catch (Exception $e)
+		catch (Exception $e) 
 		{
 		    die("Oh noes! There's an error in the query! ".$e);
 		}
     }
-	public function one() 
+	public function one()
 	{
 		try 
 		{
@@ -64,7 +65,7 @@ class Student
 		    $result = $stmt->fetch(\PDO::FETCH_ASSOC);
             return $result;
 		} 
-		catch (Exception $e)
+		catch (Exception $e) 
 		{
 		    die("Oh noes! There's an error in the query! ".$e);
 		}
@@ -96,14 +97,15 @@ class Student
 			];
 		    $stmt->execute($data);
 			$status = $stmt->rowCount();
+			
 			$sql = "DELETE FROM student WHERE id=:id";
 			$stmt = $this->db->prepare($sql);
-			$data = 
-			[
+		    $data = [
 		    	'id' => $this->_id
 			];
 		    $stmt->execute($data);
 			$status = $stmt->rowCount();
+
             return $status;
 		}
 		catch (Exception $e)
@@ -147,6 +149,7 @@ class Student
 		try
 		{
 			$sql = 'UPDATE student SET name=:name, surname=:surname, sidi_code=:sidi_code, tax_code=:tax_code WHERE id=:id';
+
 			$data = 
 			[
 				'id' =>$this->_id,
